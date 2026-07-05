@@ -2,6 +2,8 @@ import os
 import pandas as pd
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from werkzeug.utils import secure_filename
+from flask import make_response
+import json
 
 from ml.preprocessing import preprocess_data
 from ml.clustering import run_clustering
@@ -43,6 +45,16 @@ def upload_file():
 def dashboard():
     return render_template("dashboard.html")
 
+
+@app.route("/export")
+def export():
+    data = request.args.get("data")
+
+    response = make_response(data)
+    response.headers["Content-Type"] = "text/plain"
+    response.headers["Content-Disposition"] = "attachment; filename=hris_report.txt"
+
+    return response
 
 if __name__ == "__main__":
     app.run(debug=True)

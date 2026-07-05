@@ -1,78 +1,140 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>RAISY Dashboard</title>
+    <title>HRIS Pro Dashboard</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .title {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background: #22c55e;
+            border: none;
+            padding: 10px;
+            color: white;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        canvas {
+            max-height: 250px;
+        }
+    </style>
 </head>
+
 <body>
 
-    <h1>AI Cluster Results <a href="{{ url_for('upload_file') }}" style="text-decoration: none; color: brown">
-    &#160  Rerun 
-    </h1>
-</a>
+<h1>🏥 Health Resource Intelligence Dashboard</h1>
+<a href="https://raisy.onrender.com/" ><h2>Run Another</h2></a>
+<div class="grid">
+
 {% for item in summary %}
 
-<div style="border:1px solid #ccc; padding:15px; margin:15px;">
+<div class="card">
 
-    <h2>Cluster {{ item.cluster }}</h2>
+    <div class="title">
+        {{ item.cluster_name if item.cluster_name else "Cluster " ~ item.cluster }}
+    </div>
 
     <p><b>Patients:</b> {{ item.size }}</p>
     <p><b>Average Age:</b> {{ item.avg_age }}</p>
-    <p><b>Recommendation:</b> {{ item.recommendation }}</p>
 
-    <canvas id="chart{{ item.cluster }}"></canvas>
+    <p><b>AI Recommendation:</b> {{ item.recommendation }}</p>
+
+    <!-- PIE CHART -->
+    <canvas id="pie-{{ item.cluster }}"></canvas>
+
+    <!-- BAR CHART -->
+    <canvas id="bar-{{ item.cluster }}"></canvas>
+
+    <script type="application/json" id="data-{{ item.cluster }}">
+        {{ item.top_diseases | tojson }}
+    </script>
 
 </div>
 
+{% endfor %}
+
+</div>
+
+<button onclick="downloadReport()">📄 Download Report</button>
+
 <script>
-let deferredPrompt;
+window.onload = function () {
 
-window.addEventListener('beforeinstallprompt', (e) => {
-  // Prevent the mini-infobar from appearing
-  e.preventDefault();
-  // Stash the event so it can be triggered later
-  deferredPrompt = e;
-  // Show your custom install button
-  showInstallButton();
-});
+    {% for item in summary %}
 
-function showInstallButton() {
-  const installButton = document.getElementById('install-button');
-  installButton.style.display = 'block';
-  installButton.addEventListener('click', () => {
-    // Show the install prompt
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === 'accepted') {
-        console.log('User accepted the install prompt');
-      } else {
-        console.log('User dismissed the install prompt');
-      }
-      deferredPrompt = null;
+    const data{{ item.cluster }} = JSON.parse(
+        document.getElementById("data-{{ item.cluster }}").textContent
+    );
+
+    const labels = Object.keys(data{{ item.cluster }});
+    const values = Object.values(data{{ item.cluster }});
+
+    // PIE CHART
+    new Chart(document.getElementById("pie-{{ item.cluster }}"), {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Disease Distribution',
+                data: values
+            }]
+        }
     });
-  });
-}
 
+    // BAR CHART (comparison view)
+    new Chart(document.getElementById("bar-{{ item.cluster }}"), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Cases',
+                data: values
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
 
-const ctx{{ item.cluster }} = document.getElementById('chart{{ item.cluster }}');
+    {% endfor %}
 
-new Chart(ctx{{ item.cluster }}, {
-    type: 'pie',
-    data: {
-        labels: Object.keys({{ item.top_diseases | tojson }}),
-        datasets: [{
-            label: 'Diseases',
-            data: Object.values({{ item.top_diseases | tojson }})
-        }]
-    }
-});
-
-
+};
 </script>
 
-{% endfor %}
+<script>
+function downloadReport() {
+    window.print();
+}
+</script>
 
 </body>
 </html>

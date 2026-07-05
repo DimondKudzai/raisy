@@ -12,14 +12,15 @@ def interpret_clusters(df):
         avg_age = group["Age"].mean()
         size = len(group)
 
-        recommendation = generate_recommendation(top_diseases)
-
+        cluster_name = generate_cluster_name(top_diseases)
+        
         summary.append({
-            "cluster": int(cluster_id),
-            "size": size,
-            "avg_age": round(avg_age, 1),
-            "top_diseases": top_diseases,
-            "recommendation": recommendation
+        "cluster": int(cluster_id),
+        "cluster_name": cluster_name,
+        "size": size,
+        "avg_age": round(avg_age, 1),
+        "top_diseases": top_diseases,
+        "recommendation": recommendation
         })
 
         output_tables.append(group.to_dict(orient="records"))
@@ -30,17 +31,23 @@ def interpret_clusters(df):
     }
 
 
-def generate_recommendation(diseases):
+def generate_cluster_name(diseases):
     if not diseases:
-        return "Insufficient data"
+        return "General Patients"
 
     top = list(diseases.keys())[0].lower()
 
     if "malaria" in top:
-        return "Increase anti-malarial stock and mosquito net distribution by 25%"
+        return "Malaria Hotspot Cluster"
     elif "tb" in top or "tuberculosis" in top:
-        return "Prioritize TB medication and isolation capacity"
+        return "Tuberculosis High-Risk Cluster"
     elif "respiratory" in top:
-        return "Increase oxygen supply and pediatric respiratory care"
+        return "Respiratory Care Cluster"
+    elif "diabetes" in top:
+        return "Chronic Disease Management Cluster"
     else:
-        return "Allocate general medical supplies and monitor trend"
+        return "General Care Cluster"
+        
+        
+       
+        
