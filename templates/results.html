@@ -4,61 +4,31 @@
     <title>HRIS Pro Dashboard</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: Arial;
             background: #0f172a;
             color: white;
-            margin: 0;
             padding: 20px;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            margin-top: 20px;
         }
 
         .card {
             background: #1e293b;
             padding: 20px;
+            margin-bottom: 20px;
             border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        canvas {
+            max-height: 250px;
+            margin-top: 10px;
         }
 
         .title {
             font-size: 20px;
             font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        canvas {
-            width: 100% !important;
-            max-height: 260px;
-            margin-top: 10px;
-        }
-
-        a {
-            color: #a78bfa;
-            text-decoration: none;
-        }
-
-        button {
-            background: #22c55e;
-            border: none;
-            padding: 10px 15px;
-            color: white;
-            cursor: pointer;
-            border-radius: 6px;
-            margin-top: 20px;
         }
     </style>
 </head>
@@ -67,36 +37,40 @@
 
 <h1>🏥 Health Resource Intelligence Dashboard</h1>
 
-<a href="https://raisy.onrender.com/">
-    <h3>🔁 Run Another Analysis</h3>
-</a>
-
-<div class="grid">
+<div>
 
 {% for item in summary %}
 
 <div class="card">
 
     <div class="title">
-        {{ item.cluster_name if item.cluster_name else "Cluster " ~ item.cluster }}
+        Cluster {{ item.cluster }}
     </div>
 
     <p><b>Patients:</b> {{ item.size }}</p>
     <p><b>Average Age:</b> {{ item.avg_age }}</p>
 
-    <p><b>AI Recommendation:</b> {{ item.recommendation }}</p>
+    <p><b>Recommendation:</b> {{ item.recommendation }}</p>
 
-    <!-- CHARTS -->
-    <canvas id="pie-{{ item.cluster }}"></canvas>
-    <canvas id="bar-{{ item.cluster }}"></canvas>
+    <!-- DISEASE CHART -->
+    <canvas id="disease-{{ item.cluster }}"></canvas>
+
+    <!-- LOCATION CHART (🔥 NEW) -->
+    <canvas id="location-{{ item.cluster }}"></canvas>
+
+    <script type="application/json" id="data-disease-{{ item.cluster }}">
+        {{ item.top_diseases | tojson }}
+    </script>
+
+    <script type="application/json" id="data-location-{{ item.cluster }}">
+        {{ item.top_locations | tojson }}
+    </script>
 
 </div>
 
 {% endfor %}
 
 </div>
-
-<button onclick="window.print()">📄 Download / Print Report</button>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -105,51 +79,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
     summaries.forEach(function(item) {
 
-        const data = item.top_diseases;
+        // =======================
+        // DISEASE CHART
+        // =======================
+        const diseaseData = item.top_diseases;
 
-        const labels = Object.keys(data);
-        const values = Object.values(data);
-
-        const pieCanvas = document.getElementById(`pie-${item.cluster}`);
-        const barCanvas = document.getElementById(`bar-${item.cluster}`);
-
-        if (!pieCanvas || !barCanvas) {
-            console.error("Missing canvas for cluster", item.cluster);
-            return;
-        }
-
-        // 🔵 PIE CHART
-        new Chart(pieCanvas.getContext("2d"), {
+        new Chart(document.getElementById(`disease-${item.cluster}`), {
             type: 'pie',
             data: {
-                labels: labels,
+                labels: Object.keys(diseaseData),
                 datasets: [{
-                    data: values
+                    data: Object.values(diseaseData)
                 }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
             }
         });
 
-        // 📊 BAR CHART
-        new Chart(barCanvas.getContext("2d"), {
+        // =======================
+        // LOCATION CHART (🔥 NEW)
+        // =======================
+        const locationData = item.top_locations;
+
+        new Chart(document.getElementById(`location-${item.cluster}`), {
             type: 'bar',
             data: {
-                labels: labels,
+                labels: Object.keys(locationData),
                 datasets: [{
-                    label: 'Cases',
-                    data: values
+                    label: 'Patients by Location',
+                    data: Object.values(locationData)
                 }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        display: false
-                    }
+                    legend: { display: false }
                 }
             }
         });
