@@ -85,7 +85,6 @@
     <p><b>Recommendation:</b> {{ item.recommendation }}</p>
 
 
-<h2>Most prevelent disease from above per location in this cluster</h2>
     <!-- DISEASE CHART -->
     <canvas id="disease-{{ item.cluster }}"></canvas>
 
@@ -99,12 +98,13 @@
     <script type="application/json" id="data-location-{{ item.cluster }}">
         {{ item.top_locations | tojson }}
     </script>
-
+<p>The bars represent the most prevalent disease per location</p>
 </div>
 
 {% endfor %}
 
 </div>
+<br>
 
 <button onclick="window.print()">📄 Download / Print Report</button>
 <script>
