@@ -3,7 +3,7 @@ self.addEventListener("install", event => {
         caches.open("hris-cache").then(cache => {
             return cache.addAll([
                 "/",
-                "/dashboard"
+                "/upload"
             ]);
         })
     );

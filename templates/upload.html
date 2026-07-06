@@ -4,6 +4,8 @@
     <title>RAISY</title>
      <meta charset="UTF-8">
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="manifest" href="/static/manifest.json">
+     <meta name="theme-color" content="#0f172a">
     <style>
         body {
             font-family: Arial;
@@ -91,6 +93,14 @@ function showInstallButton() {
   });
 }
 
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/static/sw.js')
+    .then(() => console.log("Service Worker Registered"))
+    .catch(err => console.log("SW failed", err));
+}
 </script>
 
 </html>
