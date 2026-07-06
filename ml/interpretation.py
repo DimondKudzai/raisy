@@ -8,19 +8,20 @@ def interpret_clusters(df):
     grouped = df.groupby("cluster")
 
     for cluster_id, group in grouped:
+
         top_diseases = group["Disease"].value_counts().head(3).to_dict()
         avg_age = group["Age"].mean()
         size = len(group)
 
-        cluster_name = generate_cluster_name(top_diseases)
-        
+        # THIS WAS MISSING (your bug)
+        recommendation = generate_recommendation(top_diseases)
+
         summary.append({
-        "cluster": int(cluster_id),
-        "cluster_name": cluster_name,
-        "size": size,
-        "avg_age": round(avg_age, 1),
-        "top_diseases": top_diseases,
-        "recommendation": recommendation
+            "cluster": int(cluster_id),
+            "size": size,
+            "avg_age": round(avg_age, 1),
+            "top_diseases": top_diseases,
+            "recommendation": recommendation   # now it exists
         })
 
         output_tables.append(group.to_dict(orient="records"))
@@ -31,23 +32,19 @@ def interpret_clusters(df):
     }
 
 
-def generate_cluster_name(diseases):
+def generate_recommendation(diseases):
     if not diseases:
-        return "General Patients"
+        return "Insufficient data"
 
     top = list(diseases.keys())[0].lower()
 
     if "malaria" in top:
-        return "Malaria Hotspot Cluster"
+        return "Increase anti-malarial stock and mosquito net distribution by 25%"
     elif "tb" in top or "tuberculosis" in top:
-        return "Tuberculosis High-Risk Cluster"
+        return "Prioritize TB medication and isolation capacity"
     elif "respiratory" in top:
-        return "Respiratory Care Cluster"
+        return "Increase oxygen supply and pediatric respiratory care"
     elif "diabetes" in top:
-        return "Chronic Disease Management Cluster"
+        return "Ensure insulin and chronic care monitoring availability"
     else:
-        return "General Care Cluster"
-        
-        
-       
-        
+        return "Allocate general medical supplies and monitor patient trends"
