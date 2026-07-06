@@ -1,6 +1,6 @@
 self.addEventListener("install", event => {
     event.waitUntil(
-        caches.open("hris-cache").then(cache => {
+        caches.open("RAISY-cache").then(cache => {
             return cache.addAll([
                 "/",
                 "/upload"

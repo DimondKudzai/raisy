@@ -20,8 +20,6 @@ def interpret_clusters(df):
             "size": size,
             "avg_age": round(avg_age, 1),
             "top_diseases": top_diseases,
-
-            # 🔥 NEW: LOCATION INTELLIGENCE
             "top_locations": top_locations,
 
             "recommendation": recommendation

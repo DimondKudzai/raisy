@@ -1,4 +1,4 @@
-Age,Location,Disease,Visits
+﻿Age,Location,Disease,Visits
 5,Harare,Malaria,3
 34,Harare,Malaria,2
 60,Bulawayo,Tuberculosis,5
@@ -9,3 +9,7 @@ Age,Location,Disease,Visits
 15,Harare,Respiratory Infection,2
 30,Mutare,Malaria,3
 55,Gweru,Hypertension,4
+18,Chitungwiza,HIV,5
+22,Chitungwiza ,Malaria,4
+34,Hopely,Gonorrhea,6
+20,Hopely,Gonorrhea,3
