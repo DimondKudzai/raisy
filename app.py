@@ -38,7 +38,7 @@ def upload_file():
 
     results = interpret_clusters(df)
 
-    return render_template("results.html", tables=results["tables"], summary=results["summary"])
+    return render_template("results.html", summary=results["summary"])
 
 
 @app.route("/dashboard")
