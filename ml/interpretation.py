@@ -43,4 +43,4 @@ def generate_recommendation(diseases):
     elif "diabetes" in top:
         return "Ensure chronic care medication availability"
     else:
-        return "Allocate general medical supplies and monitor trends"
+        return "Allocate medical supplies and monitor trends"
