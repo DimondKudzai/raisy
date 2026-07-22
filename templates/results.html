@@ -66,6 +66,26 @@
 <body>
 
 <h1>🏥 Health Resource Intelligence Dashboard</h1>
+<div class="card">
+
+<h2>📊 AI Health Overview</h2>
+
+<p>
+<b>Total Clusters:</b> {{ summary|length }}
+</p>
+
+<p>
+<b>Analysis:</b>
+AI grouped patients based on disease patterns,
+age demographics and geographic distribution.
+</p>
+
+<p>
+<b>Purpose:</b>
+Support healthcare resource allocation decisions.
+</p>
+
+</div>
 <a href="https://raisy.onrender.com/">
     <h3>🔁 Run Another Analysis</h3>
 </a>
@@ -76,7 +96,7 @@
 <div class="card">
 
     <div class="title">
-        Cluster {{ item.cluster }}
+    🧠 Patient Cluster {{ item.cluster }}
     </div>
 
     <p><b>Patients:</b> {{ item.size }}</p>
@@ -98,14 +118,31 @@
     <script type="application/json" id="data-location-{{ item.cluster }}">
         {{ item.top_locations | tojson }}
     </script>
-<p>The bars represent the most prevalent disease per location</p>
+<p>
+Location distribution shows where patients in this cluster are concentrated.
+</p>
+<h3>📍 Priority Locations</h3>
+
+<ul>
+
+{% for place, count in item.top_locations.items() %}
+
+<li>
+{{ place }}:
+<b>{{ count }} patients</b>
+</li>
+
+{% endfor %}
+
+</ul>
+
 </div>
 
 {% endfor %}
 
 </div>
 <br>
-
+<br>
 <button onclick="window.print()">📄 Download / Print Report</button>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
